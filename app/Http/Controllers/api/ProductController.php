@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Exception;
 
+use function PHPSTORM_META\map;
+
 class ProductController extends Controller
 {
     public function getAllProducts()
@@ -43,8 +45,8 @@ class ProductController extends Controller
             );
         } catch (Exception $e) {
             return response()->json([
-                'error' => 'Failed to create product',
-                'message' => $e->getMessage()
+                'message' => 'Validation failed',
+                'errors' => $e->getMessage()
             ], 500);
         }
     }
@@ -54,7 +56,7 @@ class ProductController extends Controller
 
         $product = Product::find($id);
         if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
+            return response()->json(['message' => 'Product not found'], 404);
         }
 
         return ResponseFormatter::success(
@@ -73,7 +75,7 @@ class ProductController extends Controller
 
         $product = Product::find($id);
         if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
+            return response()->json(['message' => 'Product not found'], 404);
         }
 
         $product->update(array_filter($validatedData));
@@ -89,7 +91,7 @@ class ProductController extends Controller
             $product = Product::find($id);
 
             if (!$product) {
-                return response()->json(['error' => 'Product not found'], 404);
+                return response()->json(['message' => 'Product not found'], 404);
             }
             $product->delete();
             return ResponseFormatter::success(
